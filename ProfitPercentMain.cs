@@ -47,7 +47,7 @@ namespace ProfitPercent
             harmony.Patch(original, new HarmonyMethod(patch));
         }
     }
-    public class ProfitPercentPatches
+    public class ProfitPercentPatchesOLD
     {
         static bool instantiated = false;   //flag to check if we already instantiated the new columns
         [HarmonyPostfix]

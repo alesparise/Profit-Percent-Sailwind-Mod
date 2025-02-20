@@ -32,35 +32,36 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ProfitPercentMain.cs" />
+    <Compile Include="ProfitPercentPatches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony, Version=2.9.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Sailwind\BepInEx\core\0Harmony.dll</HintPath>
+      <HintPath>..\..\..\..\..\Games\Steam\steamapps\common\Sailwind\BepInEx\core\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Sailwind\Sailwind_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\..\..\..\Games\Steam\steamapps\common\Sailwind\Sailwind_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx, Version=5.4.22.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Sailwind\BepInEx\core\BepInEx.dll</HintPath>
+      <HintPath>..\..\..\..\..\Games\Steam\steamapps\common\Sailwind\BepInEx\core\BepInEx.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Sailwind\Sailwind_Data\Managed\System.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Sailwind\Sailwind_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\..\..\Games\Steam\steamapps\common\Sailwind\Sailwind_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Sailwind\Sailwind_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>..\..\..\..\..\Games\Steam\steamapps\common\Sailwind\Sailwind_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Sailwind\Sailwind_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+      <HintPath>..\..\..\..\..\Games\Steam\steamapps\common\Sailwind\Sailwind_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
