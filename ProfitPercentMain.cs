@@ -17,7 +17,7 @@ namespace ProfitPercent
         // Necessary plugin info
         public const string pluginGuid = "pr0skynesis.profitpercent";
         public const string pluginName = "Profit Percent";
-        public const string pluginVersion = "1.2.0";
+        public const string pluginVersion = "1.2.1";            //1.2.1 was a minor patch to fix incompatibility with updated savegames
 
         //COLORED TEXT
         public static ConfigEntry<bool> coloredTextConfig;
@@ -43,7 +43,7 @@ namespace ProfitPercent
             MethodInfo patch1 = AccessTools.Method(typeof(ProfitPercentPatches), "MainPatch");
             harmony.Patch(original1, null, new HarmonyMethod(patch1));
 
-            //ShowGoodPage patch
+            //Auto-Receipt Patch
             MethodInfo original2 = AccessTools.Method(typeof(EconomyUIButton), "OnActivate");
             MethodInfo patch2 = AccessTools.Method(typeof(ProfitPercentPatches), "ButtonPatch");
             harmony.Patch(original2, new HarmonyMethod(patch2));

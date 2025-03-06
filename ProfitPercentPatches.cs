@@ -68,7 +68,7 @@ namespace ProfitPercent
             InitializeProd();
         }
         public static void MainPatch(int[][] ___bookmarkIslands, int ___currentBookmark, IslandMarket ___currentIsland)
-        {   //Main patch for the trade UI
+        {   //Main patch for the trade UI - This is called every time the page is refreshed
 
             //Capitalise the good name
             goodName.text = Capitalize(goodName.text);
@@ -89,7 +89,7 @@ namespace ProfitPercent
                 if (ProfitPercentMain.showBestDealsConfig.Value)
                 {
                     bdBestDeals.text = "<color=#4D0000>★ Best Deals! ★</color>";
-                    FindBestDeals(___bookmarkIslands, ___currentBookmark, ___currentIsland.GetPortIndex());
+                    FindBestDeals(___bookmarkIslands, ___currentBookmark, ___currentIsland);
                 }
                 else
                 {
@@ -99,88 +99,112 @@ namespace ProfitPercent
                     bdAbsolute.text = "";
                 }
                 GetProduction(portIndex, goodIndex);
-                int buyp = BuyP(___currentIsland.GetPortIndex(), goodIndex);
-                int sellp = SellP(portIndex, goodIndex);
-                int profit = sellp - buyp;
-
-                //Profit percent
-                float profitPercent = Mathf.Round(((float)profit / buyp) * 100f);
-
-                //Profit per pound
-                float cargoWeight = goodWeights[goodIndex];
-                float profitPerPound = (float)Math.Round(profit / cargoWeight, 2);
-
-                if (ProfitPercentMain.coloredTextConfig.Value)
-                {   //With colors
-                    //Island names
+                if (___currentIsland.knownPrices[portIndex] == null || ___currentIsland.knownPrices[portIndex].buyPrices == null)
+                {
                     if (portIndex == ___currentIsland.GetPortIndex())
                     {   //current island
-                        islandNames.text += $"<color=#4D0000>• {Port.ports[portIndex].GetPortName()}</color>\n";
-                    }
-                    else
-                    {   //not the currentIsland
-                        islandNames.text += $"{Port.ports[portIndex].GetPortName()}\n";
-                    }
-                    int higherThreshold = ProfitPercentMain.blueThresholdConfig.Value;
-                    int lowerThreshold = ProfitPercentMain.greenThresholdConfig.Value;
-                    if (ProfitPercentMain.blueThresholdConfig.Value < ProfitPercentMain.greenThresholdConfig.Value)
-                    {   //make sure the thresholds are used correctly by switching them around if necessary
-                        higherThreshold = ProfitPercentMain.greenThresholdConfig.Value;
-                        lowerThreshold = ProfitPercentMain.blueThresholdConfig.Value;
-                    }
-                    if (float.IsInfinity(profitPercent))
-                    {   //if buyp is zero (good not sold in the current port), we get infinite profit. in that case we add a yellow -.
-                        profitColumn.text += $"<color=#CC7F00>- </color>\n";
-                        percentText.text += $"<color=#CC7F00>- </color>\n";
-                        perPoundText.text += $"<color=#CC7F00>- </color>\n";
-                    }
-                    else if (profitPercent > higherThreshold)
-                    {   //blue color #051139
-                        profitColumn.text += $"<color=#051139>{profit}</color>\n";
-                        percentText.text += $"<color=#051139>{profitPercent}<size=40%>%</size></color>\n";
-                        perPoundText.text += $"<color=#051139>{profitPerPound}</color>\n";
-                    }
-                    else if (profitPercent > lowerThreshold)
-                    {   //green color #003300 // old color was #113905
-                        profitColumn.text += $"<color=#003300>{profit}</color>\n";
-                        percentText.text += $"<color=#003300>{profitPercent}<size=40%>%</size></color>\n";
-                        perPoundText.text += $"<color=#003300>{profitPerPound}</color>\n";
-                    }
-                    else if (profitPercent < 0f)
-                    {   //red color #4D0000 //old color was #7C0000
-                        profitColumn.text += $"<color=#4D0000>{profit}</color>\n";
-                        percentText.text += $"<color=#4D0000>{profitPercent}<size=40%>%</size></color>\n";
-                        perPoundText.text += $"<color=#4D0000>{profitPerPound}</color>\n";
-                    }
-                    else // between the green threshold and zero color is yellow
-                    {   //yellow color #CC7F00
-                        profitColumn.text += $"<color=#CC7F00>{profit}</color>\n";
-                        percentText.text += $"<color=#CC7F00>{profitPercent}<size=40%>%</size></color>\n";
-                        perPoundText.text += $"<color=#CC7F00>{profitPerPound}</color>\n";
-                    }
-                }
-                else
-                {   //Without colors
-                    //Island names
-                    if (portIndex == ___currentIsland.GetPortIndex())
-                    {   //current island
-                        islandNames.text += $"• {Port.ports[portIndex].GetPortName()}\n";
-                    }
-                    else
-                    {   //not the currentIsland
-                        islandNames.text += $"{Port.ports[portIndex].GetPortName()}\n";
-                    }
-                    if (float.IsInfinity(profitPercent))
-                    {   //if buyp is zero (good not sold in the current port), we get infinite profit. in that case we add a yellow -.
-                        profitColumn.text += $"- \n";
-                        percentText.text += $"- \n";
-                        perPoundText.text += $"- \n";
+                        if (ProfitPercentMain.coloredTextConfig.Value)
+                        {
+                            islandNames.text += $"<color=#4D0000>• {Port.ports[portIndex].GetPortName()}</color>\n";
+                        }
+                        else
+                        {
+                            islandNames.text += $"• {Port.ports[portIndex].GetPortName()}\n";
+                        }
                     }
                     else
                     {
-                        profitColumn.text += $"{profit}\n";
-                        percentText.text += $"{profitPercent}<size=40%>%</size>\n";
-                        perPoundText.text += $"{profitPerPound}\n";
+                        islandNames.text += $"{Port.ports[portIndex].GetPortName()}\n";
+                    }
+                    profitColumn.text += $"?\n";
+                    percentText.text += $"?\n";
+                    perPoundText.text += $"?\n";
+                }
+                else
+                {
+                    int buyp = BuyP(___currentIsland.GetPortIndex(), goodIndex);
+                    int sellp = SellP(portIndex, goodIndex);
+                    int profit = sellp - buyp;
+
+                    //Profit percent
+                    float profitPercent = Mathf.Round(((float)profit / buyp) * 100f);
+
+                    //Profit per pound
+                    float cargoWeight = goodWeights[goodIndex];
+                    float profitPerPound = (float)Math.Round(profit / cargoWeight, 2);
+
+                    if (ProfitPercentMain.coloredTextConfig.Value)
+                    {   //With colors
+                        //Island names
+                        if (portIndex == ___currentIsland.GetPortIndex())
+                        {   //current island
+                            islandNames.text += $"<color=#4D0000>• {Port.ports[portIndex].GetPortName()}</color>\n";
+                        }
+                        else
+                        {   //not the currentIsland
+                            islandNames.text += $"{Port.ports[portIndex].GetPortName()}\n";
+                        }
+                        int higherThreshold = ProfitPercentMain.blueThresholdConfig.Value;
+                        int lowerThreshold = ProfitPercentMain.greenThresholdConfig.Value;
+                        if (ProfitPercentMain.blueThresholdConfig.Value < ProfitPercentMain.greenThresholdConfig.Value)
+                        {   //make sure the thresholds are used correctly by switching them around if necessary
+                            higherThreshold = ProfitPercentMain.greenThresholdConfig.Value;
+                            lowerThreshold = ProfitPercentMain.blueThresholdConfig.Value;
+                        }
+                        if (float.IsInfinity(profitPercent))
+                        {   //if buyp is zero (good not sold in the current port), we get infinite profit. In that case we add a yellow -.
+                            profitColumn.text += $"<color=#CC7F00>- </color>\n";
+                            percentText.text += $"<color=#CC7F00>- </color>\n";
+                            perPoundText.text += $"<color=#CC7F00>- </color>\n";
+                        }
+                        else if (profitPercent > higherThreshold)
+                        {   //blue color #051139
+                            profitColumn.text += $"<color=#051139>{profit}</color>\n";
+                            percentText.text += $"<color=#051139>{profitPercent}<size=40%>%</size></color>\n";
+                            perPoundText.text += $"<color=#051139>{profitPerPound}</color>\n";
+                        }
+                        else if (profitPercent > lowerThreshold)
+                        {   //green color #003300 // old color was #113905
+                            profitColumn.text += $"<color=#003300>{profit}</color>\n";
+                            percentText.text += $"<color=#003300>{profitPercent}<size=40%>%</size></color>\n";
+                            perPoundText.text += $"<color=#003300>{profitPerPound}</color>\n";
+                        }
+                        else if (profitPercent < 0f)
+                        {   //red color #4D0000 //old color was #7C0000
+                            profitColumn.text += $"<color=#4D0000>{profit}</color>\n";
+                            percentText.text += $"<color=#4D0000>{profitPercent}<size=40%>%</size></color>\n";
+                            perPoundText.text += $"<color=#4D0000>{profitPerPound}</color>\n";
+                        }
+                        else // between the green threshold and zero color is yellow
+                        {   //yellow color #CC7F00
+                            profitColumn.text += $"<color=#CC7F00>{profit}</color>\n";
+                            percentText.text += $"<color=#CC7F00>{profitPercent}<size=40%>%</size></color>\n";
+                            perPoundText.text += $"<color=#CC7F00>{profitPerPound}</color>\n";
+                        }
+                    }
+                    else
+                    {   //Without colors
+                        //Island names
+                        if (portIndex == ___currentIsland.GetPortIndex())
+                        {   //current island
+                            islandNames.text += $"• {Port.ports[portIndex].GetPortName()}\n";
+                        }
+                        else
+                        {   //not the currentIsland
+                            islandNames.text += $"{Port.ports[portIndex].GetPortName()}\n";
+                        }
+                        if (float.IsInfinity(profitPercent))
+                        {   //if buyp is zero (good not sold in the current port), we get infinite profit. in that case we add a yellow -.
+                            profitColumn.text += $"- \n";
+                            percentText.text += $"- \n";
+                            perPoundText.text += $"- \n";
+                        }
+                        else
+                        {
+                            profitColumn.text += $"{profit}\n";
+                            percentText.text += $"{profitPercent}<size=40%>%</size>\n";
+                            perPoundText.text += $"{profitPerPound}\n";
+                        }
                     }
                 }
             }
@@ -300,7 +324,7 @@ namespace ProfitPercent
             detailsUI.Find("highlight (parent)").gameObject.SetActive(false);
         }
         private static void InitializeUI()
-        {   //Initializes the columns we'll edit and the highlight bar
+        {   //Initializes the columns we'll edit and the disables the vanilla highlight bar
             islandNames.text = "";
             productionText.text = "";
             profitColumn.text = "";
@@ -375,11 +399,11 @@ namespace ProfitPercent
         private static int SellP(int portIndex, int goodIndex)
         {   //Gets the sell price of the good
             object[] sellpParameters = new object[] { portIndex, goodIndex };
-
+            
             return (int)sellpInfo.Invoke(EconomyUI.instance, sellpParameters);
         }
-        private static void FindBestDeals(int[][] bookmark, int currentBookmark, int currentIsland)
-        {   //Finds the best deals for the best deal section
+        private static void FindBestDeals(int[][] bookmark, int currentBookmark, IslandMarket currentMarket)
+        {   //Finds the best deals for the best deals section
             #region Variables
             //max values
             int maxProfit = int.MinValue;
@@ -395,17 +419,22 @@ namespace ProfitPercent
             int portPerPound = -1;
             #endregion
 
+            int currentIsland = currentMarket.GetPortIndex();
             //Iterate through all goods
             for (int i = 0; i < goods.Length; i++)
             {   //iterate through all goods
                 if (goods[i] == null) continue;
-
+                
                 int buyp = BuyP(currentIsland, i);  //buy price for i-esime good in the current island
                 for (int j = 0; j < bookmark[currentBookmark].Length; j++)
                 {   //iterate through all ports
                     int portIndex = bookmark[currentBookmark][j];
+                    if (currentMarket.knownPrices[portIndex] == null || currentMarket.knownPrices[portIndex].buyPrices == null)
+                    {
+                        continue;
+                    }
                     int sellp = SellP(portIndex, i);    //sell price for the i-esime good in the j-esime port
-
+                    
                     int profit = buyp != 0 ? sellp - buyp : int.MinValue;
                     float profitPercent = buyp != 0 ? Mathf.Round(((float)profit / buyp) * 100f) : float.MinValue;
                     float cargoWeight = goodWeights[i];

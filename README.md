@@ -18,5 +18,5 @@
 **Installation:** Download ProfitPercent.dll and move it into the *...\Sailwind\BepInEx\plugins folder*  
   
 **Game version:** *0.30+*  
-**Mod Version:** *1.2.0*  
+**Mod Version:** *1.2.1*  
 **Compatibility:** This mod is not compatible with __CaptainD54321's Tweaks__. 
